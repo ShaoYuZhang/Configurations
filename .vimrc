@@ -1,12 +1,14 @@
-" ****************************************************************************
+"  ---------------------------------------------------------------------------
 
+" Don't use vi stuff
 set nocompatible
+set notitle
 
 "tab control
 set shiftwidth=2
 set softtabstop=2
 set tabstop=2
-set expandtab
+set expandtab " Convert tab to spaces
 
 set ls=2
 
@@ -16,7 +18,7 @@ set autoindent
 
 set showcmd
 set incsearch
-"set number
+"set number " Show line-numbers
 set ignorecase
 set smartcase
 set history=1000
@@ -24,12 +26,11 @@ set history=1000
 set linebreak
 set wrapscan " wrap around when searching
 
-set title
 syntax on
 
 "set ff=dos " Write in dos format
 
-" look in the current directory for tags, and work up the tree towards root
+" look in the current directory for tag files, and work up the tree towards root
 " until one is found. IOW, now can be anywhere in source tree
 " originally 'set tags=tags;/', 
 " but bug:
@@ -65,7 +66,6 @@ nnoremap # ?\<<C-R>=expand('<cword>')<CR>\><CR>
 
 imap <C-SPACE> <Esc>
 
-nnoremap ; :
 nnoremap <C-p> zfa
 
 " build tags libs for the current working directory.
@@ -77,11 +77,19 @@ nnoremap <C-p> zfa
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 " remember C-W C-] is open definition in a horizontal split
 
+" Block commenting for a number of known extensions.
+au FileType haskell,vhdl,ada let b:comment_leader = '-- '
+au FileType vim let b:comment_leader = '" '
+au FileType c,cpp,java let b:comment_leader = '// '
+au FileType sh,make let b:comment_leader = '# '
+au FileType tex let b:comment_leader = '% '
+noremap <silent> ,c :<C-B>sil <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:noh<CR>
+noremap <silent> ,u :<C-B>sil <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:noh<CR>
 " ======================= Others ==========================================
 
 set backspace=eol,indent,start 
 
-"showmatch
+set showmatch
 "cause cursor to briefly jump to brace/paren/brack match when closing
 "set guioptions-= t //turn off gui vim's toolbar
 set mouse=a "use mouse everywhere
@@ -126,7 +134,7 @@ fun! SetMkfile()
   return "."
 endf
 
-
 "command! -nargs=* Make tabnew | let $mkpath = SetMkfile() | make <args> -C $mkpath | cwindow 10
 " create Make command that finds the file
 command! -nargs=* Make let $mkpath = SetMkfile() | make <args> -C $mkpath 
+
